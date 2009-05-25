@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tetris.h"
-
-
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
+// for visualizza
+int *grid;
+int size;
+int currentLine = NULL;
 // FUNZIONI TETRIS
 
 rbtree *scatola(int x){
@@ -10,19 +13,29 @@ rbtree *scatola(int x){
 		return NULL;
 	rbtree* temp = createrbtree();
 	temp->size = x;
-	temp->columns_counter = malloc((x-1) * sizeof (int));
+	temp->columns_counter = malloc((x) * sizeof (int));
+	for(size_t i = 0; i <= temp->size; ++i)
+	{
+		temp->columns_counter[i] = 0;
+	}
 	return temp;
 }
 
 int inserisci(rbtree* box, int x){
+	int base;
 	// il blocco eccede la dimensione consentita
 	if (x+1 >= box->size)
 		return -1;	
-	
+		
+	base = MAX(box->columns_counter[x],box->columns_counter[x+1]);
+	// inserisci elemento
+	rbinsert(box,x,base+1);
 	// sistema contatore colonne
-	box->columns_counter[x] = x;
-	box->columns_counter[x+1] = x;
-	box->columns_counter[0] = 0;
+
+	box->columns_counter[x] = base + 1;
+	box->columns_counter[x+1] = base + 1;
+	
+	
 	return 0;
 }
 
@@ -194,6 +207,94 @@ rbnode *search(rbtree *r, int p, int l)
                       n = n->right;
 	return n == r->nil ? NULL : n;
 }
+/* Controllo se le proprietà dopo la cancellazione vanno bene */
+void fixup(rbtree *tree, rbnode *x)
+{
+	while(x != tree->root && x->c == black) {                   /* Finchè x non è la radice e il padre è black */
+		if(x == x->up->left) {                                  
+             rbnode *w = x->up->right;                             
+			 if(w->c == red) {
+                     w->c = black;                                 
+				     x->up->c = red;                               
+     				 leftrotate(tree, x->up);                       
+                     w = x->up->right;                             
+			}
+			if(w->left->c == black && w->right->c == black) {
+				w->c = red;                                   
+				x = x->up;                                    
+			} else {
+				if(w->right->c == black) {
+					w->left->c = black;                       
+					w->c = red;                               
+					rightrotate(tree, w);                      
+					w = x->up->right;                         
+				}
+				w->c = x->up->c;                              
+				x->up->c = black;                             
+				w->right->c = black;                          
+				leftrotate(tree, x->up);                       
+				x = tree->root;                               
+			}
+		} else {          
+               rbnode *w = x->up->left;                                    
+			   if(w->c == red) {  
+                       w->c = black;                                 
+  				       x->up->c = red;                              
+  				       rightrotate(tree, x->up);                     
+  				       w = x->up->left;                              
+                }
+			if(w->right->c == black && w->left->c == black) {
+				w->c = red;                                   
+				x = x->up;                                    
+			} else {
+				if(w->left->c == black) {
+					w->right->c = black;                      
+					w->c = red;                               
+					leftrotate(tree, w);                     
+					w = x->up->left;                          
+				}
+				w->c = x->up->c;                              
+				x->up->c = black;                             
+				w->left->c = black;                          
+				rightrotate(tree, x->up);                     
+				x = tree->root;                              
+			}
+		}
+	}
+	x->c = black;
+}
+/* Cancellazione di un elemento dell'albero */
+void rbdelete(rbtree *tree, rbnode *q)
+{
+	rbnode *r, *s;
+    
+	if(q->left == tree->nil || q->right == tree->nil)
+		r = q;
+	else {
+         r = q->right;
+         while (r->left != tree->nil)
+                        r = r->left;
+         }
+
+
+	if(r->left != tree->nil)
+	           s = r->left;
+    else
+        s = r->right;
+        s->up = r->up;
+	if(r->up)
+             if(r == r->up->left)
+                r->up->left = s;
+             else
+			      r->up->right = s;
+	else
+        tree->root = s;		      
+	if(r != q)
+        q->p = r->p;
+	if(r->c == black)
+		fixup(tree, s);
+	free(r);
+}
 
 
 int is_lower_than(int pa, int la, int pb, int lb){
@@ -217,7 +318,59 @@ void inorder(rbnode *p, rbnode *nil)
 	}
 }
 
-void visualizza(rbtree *p)
+void display(rbtree *p)
 {
 	inorder(p->root, p->nil);
+}
+
+void inorderadv(rbnode *p, rbnode *nil)
+{
+	if(p != nil) {
+        	inorderadv(p->left,nil);
+			if (currentLine == NULL)
+				currentLine = p->l;
+			
+			
+			if(p->l != currentLine){
+				currentLine = p->l;
+				print_row(grid, size);
+				printf("\n");
+			}
+			grid[p->p] = 1;
+            inorderadv(p->right,nil);
+	}
+}
+
+void visualizza(rbtree *p)
+{
+	grid = malloc(p->size * sizeof(int));
+	size = p->size;
+	inorderadv(p->root, p->nil);
+	print_row(grid, p->size);
+	
+}
+
+
+void print_row(int *grid, int size){
+	int n = 0;
+	while (n < size) 
+	{
+	
+
+		if (grid[n] == 1){ 
+			grid[n] = 0;
+			n++;
+			printf("XX");
+		
+		}
+			 else{
+					grid[n] = 0;
+				printf(" ");
+				}
+				
+		
+			n++;
+		
+		}
+		
 }
