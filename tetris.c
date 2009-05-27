@@ -13,10 +13,10 @@ rbtree *scatola(int x){
 		return NULL;
 	rbtree* temp = createrbtree();
 	temp->size = x;
-	temp->columns_counter = malloc((x) * sizeof (int));
+	temp->c_count = malloc((x) * sizeof (int));
 	for(size_t i = 0; i <= temp->size; ++i)
 	{
-		temp->columns_counter[i] = 0;
+		temp->c_count[i] = 0;
 	}
 	return temp;
 }
@@ -27,13 +27,13 @@ int inserisci(rbtree* box, int x){
 	if (x+1 >= box->size)
 		return -1;	
 		
-	base = MAX(box->columns_counter[x],box->columns_counter[x+1]);
+	base = MAX(box->c_count[x],box->c_count[x+1]);
 	// inserisci elemento
 	rbinsert(box,x,base+1);
 	// sistema contatore colonne
 
-	box->columns_counter[x] = base + 1;
-	box->columns_counter[x+1] = base + 1;
+	box->c_count[x] = base + 1;
+	box->c_count[x+1] = base + 1;
 	
 	
 	return 0;
@@ -100,10 +100,10 @@ void rightrotate(rbtree *r, rbnode *x)
     x->up = y;
 }				
 
+
 /* Inserimento del singolo nodo, con valorizzazione di tutti i campi del nodo */
 rbnode *simpleinsert(rbtree *tree, int p, int l)
 {
-   
 	rbnode *q = (rbnode*) malloc(sizeof(rbnode));
 	rbnode *r = tree->root;
 	rbnode *s = tree->nil;
@@ -112,51 +112,85 @@ rbnode *simpleinsert(rbtree *tree, int p, int l)
 		fprintf(stderr,"Errore di allocazione C\n");
         	exit(-4);
 	}
-	
 	q->p = p;
 	q->l = l;
 
 	q->left = q->right = tree->nil;
 	q->c = red;
-	
 	while(r != tree->nil) {                /* Controllo dove va inserito il nuovo nodo */
-		
 		s = r;
 		if (is_lower_than(p,l, r->p, r->l) < 0){
 		   r = r->left;
         }
-		else{
-			if (is_lower_than(p,l, r->p, r->l) == 0)
-				return NULL;
-             r = r->right;
-        }                  
-      }
-	   q->up = s;
-  
-
+		else {
+             r = r->right;                  
+             }
+        }
+	q->up = s;
 	if(s == tree->nil)
 		tree->root = q;
 	else{
-		
        if(is_lower_than(p,l, s->p, s->l) < 0)
            s->left = q;
-		else{
-			if (is_lower_than(p,l, s->p, s->l) == 0)
-				return NULL;
+	   else
    	       s->right = q;
-		}
-	}
-
-	return q;
+	}return q;
 }
+/* Inserimento del singolo nodo, con valorizzazione di tutti i campi del nodo */
+// rbnode *simpleinsert(rbtree *tree, int p, int l)
+// {
+//    
+// 	rbnode *q = (rbnode*) malloc(sizeof(rbnode));
+// 	rbnode *r = tree->root;
+// 	rbnode *s = tree->nil;
+// 
+// 	if(!q) { 
+// 		fprintf(stderr,"Errore di allocazione C\n");
+//         	exit(-4);
+// 	}
+// 	
+// 	q->p = p;
+// 	q->l = l;
+// 
+// 	q->left = q->right = tree->nil;
+// 	q->c = red;
+// 	
+// 	while(r != tree->nil) {                /* Controllo dove va inserito il nuovo nodo */
+// 		
+// 		s = r;
+// 		if (is_lower_than(p,l, r->p, r->l) < 0){
+// 		   r = r->left;
+//         }
+// 		else{
+// 			if (is_lower_than(p,l, r->p, r->l) == 0)
+//              r = r->right;
+//         }                  
+//       }
+// 	   q->up = s;
+//   
+// 
+// 	if(s == tree->nil)
+// 		tree->root = q;
+// 	else{
+// 		
+//        if(is_lower_than(p,l, s->p, s->l) < 0)
+//            s->left = q;
+// 		else{
+// 			if (is_lower_than(p,l, s->p, s->l) == 0)
+// 				return NULL;
+//    	       s->right = q;
+// 		}
+// 	}
+// 
+// 	return q;
+// }
 
 /* Inserimento di un nuovo elemento nell'albero */
 int rbinsert(rbtree *tree, int p, int l)
 {
 	
 	rbnode *x = simpleinsert(tree, p, l);
-	if (x == NULL)
-			return -1;
+
 	while(x != tree->root && x->up->c == red) {     /* Finchè x non è la radice e il padre è red */
 		if(x->up == x->up->up->left) {              /* Se il padre di x è uguale al figlio sinistro di suo nonno, cioè il padre di x */
 			rbnode *y = x->up->up->right;           /* y è uguale allo zio di x */
@@ -201,10 +235,12 @@ rbnode *search(rbtree *r, int p, int l)
 	rbnode *n = r->root;
 
 	while(n != r->nil && is_lower_than(p,l, n->p,n->l) !=0)
-	        if(is_lower_than(p,l, n->p,n->l) < 0)
+	        if(is_lower_than(p,l, n->p,n->l) < 0){
+					// printf("vado a sinistra \n");
 	                  n = n->left;
-                      else
-                      n = n->right;
+                     } else{
+	// printf("vado a destra \n");
+                      n = n->right;}
 	return n == r->nil ? NULL : n;
 }
 /* Controllo se le proprietà dopo la cancellazione vanno bene */
@@ -290,9 +326,11 @@ void rbdelete(rbtree *tree, rbnode *q)
 	else
         tree->root = s;		      
 	if(r != q)
-        q->p = r->p;
+		q->p = r->p;
+		q->l = r->l;
 	if(r->c == black)
 		fixup(tree, s);
+		// printf("canclelo elemento (%d,%d) \n", r->p, r->l);
 	free(r);
 }
 
@@ -309,18 +347,19 @@ int is_lower_than(int pa, int la, int pb, int lb){
 	return 0; // sono uguali
 }
 
-void inorder(rbnode *p, rbnode *nil)
+void inorder(rbnode *n, rbnode *nil)
 {
-	if(p != nil) {
-        	inorder(p->left,nil);
-			printf("(%d,%d) ", p->p, p->l);
-            inorder(p->right,nil);
+	if(n != nil) {
+        	inorder(n->left,nil);
+			printf("(%d,%d) ", n->p, n->l);
+            inorder(n->right,nil);
 	}
 }
 
 void display(rbtree *p)
 {
 	inorder(p->root, p->nil);
+	printf("\n");
 }
 
 void inorderadv(rbnode *p, rbnode *nil)
@@ -329,8 +368,7 @@ void inorderadv(rbnode *p, rbnode *nil)
         	inorderadv(p->left,nil);
 			if (currentLine == NULL)
 				currentLine = p->l;
-			
-			
+
 			if(p->l != currentLine){
 				currentLine = p->l;
 				print_row(grid, size);
@@ -350,13 +388,46 @@ void visualizza(rbtree *p)
 	
 }
 
+int* estrai_in_parallelo(rbtree* box){
+	int* free_elements = malloc((box->size) * sizeof (int));
+	int j = 0, i = 0, count;
+	while (i < box->size){
+		    count = 0;
+			// metto a 0 il contenuto nella posizione i e i+1 dell'array elementi liberi  O(2)
+			free_elements[i] = 0;
+			free_elements[i+1] = 0;
+	    	
+			if(box->c_count[i] == box->c_count[i+1]  // sono uguali 
+		      && box->c_count[i+1] != 0 && box->c_count[i] != 0 // c'è qualcosa nella colonna){
+				// trovato possibile elemento rettangolo completo
+			){
+			
+			// Caso particolare gradino discende
+			if(box->c_count[i-1]>box->c_count[i]){
+				int current = box->c_count[i];
+				for(int k = i; k < box->size; ++k){
+					// printf ("elemento => %d \n",k);			
+					if (box->c_count[k] == current)
+						count ++;
+					else
+						break;
+				}
+			}
+			free_elements[j] = (count % 2) != 0 ? i+1 : i;
+            free_elements[j+1] = box->c_count[i];
+			j = j+2;
+			i++;
+		}
+	i++;
+	}
+
+	return free_elements;
+}
 
 void print_row(int *grid, int size){
 	int n = 0;
 	while (n < size) 
 	{
-	
-
 		if (grid[n] == 1){ 
 			grid[n] = 0;
 			n++;
@@ -365,7 +436,7 @@ void print_row(int *grid, int size){
 		}
 			 else{
 					grid[n] = 0;
-				printf(" ");
+					printf(" ");
 				}
 				
 		

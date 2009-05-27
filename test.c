@@ -1,6 +1,6 @@
 #include "tetris.h"
 #include "cgreen/cgreen.h"
-
+#include <stdio.h>
 
 // Rbtree
 void should_create_a_tree(){
@@ -21,17 +21,105 @@ void should_insert_element(){
 	assert_not_equal(NULL,search(box,2,0));
 }
 
-void should_remove_items(){
+void should_remove_an_item(){
 	rbtree *box = createrbtree();
-	rbinsert(box,2,2);
-	rbnode* node = search(box,2,2);
+	rbinsert(box,3,2);
+	rbnode* node = search(box,3,2);
 	assert_not_equal(NULL,node);
+	// printf("prima =============== \n");
+	// display(box);
 	rbdelete(box,node);
+	// printf("\n dopo =============== \n");
+	// display(box);
+	// printf("\n \n");
+	node = search(box,3,2);
+	// display(box);
+
+	
+
+}
+
+void should_remove_many_items(){
+	rbtree *box = createrbtree();
+	rbinsert(box,3,1);
+	rbinsert(box,4,1);
+	rbinsert(box,1,1);
+	rbinsert(box,8,1);
+	rbinsert(box,2,1);
+	rbinsert(box,5,3);
+	rbinsert(box,2,2);
+	rbinsert(box,2,3);
+	rbinsert(box,2,4);
+	
 	display(box);
-	printf(" dopo ");
+	printf("\n");
+	rbnode* node = search(box,2,1);
+	rbdelete(box,node);
+	assert_equal(NULL, search(box,2,1));
+	node = search(box,13,1);
+	
+	assert_not_equal(NULL, search(box,3,1));
+	rbdelete(box,search(box,3,1));
+	assert_equal(NULL, search(box,3,1));
+	
+	assert_not_equal(NULL, search(box,1,1));
+	rbdelete(box,search(box,1,1));
+	assert_equal(NULL, search(box,1,1));
+	
+	assert_not_equal(NULL, search(box,4,1));
+	rbdelete(box,search(box,4,1));
+	assert_equal(NULL, search(box,4,1));
+	
+	assert_not_equal(NULL, search(box,2,4));
+	rbdelete(box,search(box,2,4));
+	assert_equal(NULL, search(box,2,4));
+	
+	assert_not_equal(NULL, search(box,2,2));
+	rbdelete(box,search(box,2,2));
+	assert_equal(NULL, search(box,2,2));
+	
+	assert_not_equal(NULL, search(box,2,3));
+	rbdelete(box,search(box,2,3));
+	assert_equal(NULL, search(box,2,3));
+	
+	rbinsert(box,5,5);
+	
+	assert_not_equal(NULL, search(box,5,3));
+	rbdelete(box,search(box,5,3));
+	assert_equal(NULL, search(box,5,3));
+	
+	assert_not_equal(NULL, search(box,8,1));
+	rbdelete(box,search(box,8,1));
+	assert_equal(NULL, search(box,8,1));
+	
+	assert_not_equal(NULL, search(box,5,5));
+	rbdelete(box,search(box,5,5));
+	assert_equal(NULL, search(box,5,5));
+	
 	display(box);
-	printf(" \n");
-	// assert_equal(NULL,search(box,2,2));
+
+}
+void should_search_many_items(){
+	rbtree *box = createrbtree();
+	rbinsert(box,3,1);
+	rbnode *node = search(box,2,1);
+	assert_equal(NULL,node);
+	node = search(box,4,1);
+	assert_equal(NULL,node);
+	node = search(box,5,1);
+	assert_equal(NULL,node);
+	node = search(box,7,1);
+	assert_equal(NULL,node);
+	node = search(box,9,1);
+	assert_equal(NULL,node);
+	node = search(box,3,1);
+	assert_not_equal(NULL,node);
+	rbinsert(box,5,1);
+	node = search(box,8,1);
+	assert_equal(NULL,node);
+	node = search(box,5,1);
+	assert_not_equal(NULL,node);
+	// visualizza(box);
 }
 // tools
 void test_is_lower_than(){
@@ -70,7 +158,7 @@ void test_is_lower_than(){
 void should_create_a_box(){
 	rbtree *box = scatola(5);
 	assert_not_equal(NULL,box);
-	assert_not_equal(NULL,box->columns_counter);
+	assert_not_equal(NULL,box->c_count);
 	assert_equal(5,box->size);
 	free(box);
 }
@@ -106,41 +194,41 @@ void should_insert_sequence_1(){
 	// inserisci pezzo posizione 2 
 	assert_equal(0, inserisci(box,2));
 	assert_not_equal(NULL,search(box,2,1));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(0,box->columns_counter[1]);
-	assert_equal(1,box->columns_counter[2]);
-	assert_equal(1,box->columns_counter[3]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(0,box->c_count[1]);
+	assert_equal(1,box->c_count[2]);
+	assert_equal(1,box->c_count[3]);
 	// inserisci pezzo posizione 1
 	assert_equal(0, inserisci(box,1));
 	assert_not_equal(NULL,search(box,1,2));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(2,box->columns_counter[1]);
-	assert_equal(2,box->columns_counter[2]);
-	assert_equal(1,box->columns_counter[3]);
-	assert_equal(0,box->columns_counter[0]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(2,box->c_count[1]);
+	assert_equal(2,box->c_count[2]);
+	assert_equal(1,box->c_count[3]);
+	assert_equal(0,box->c_count[0]);
 	// inserisci pezzo posizione 1
 	assert_equal(0, inserisci(box,3));
 	assert_not_equal(NULL,search(box,3,2));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(2,box->columns_counter[1]);
-	assert_equal(2,box->columns_counter[2]);
-	assert_equal(2,box->columns_counter[3]);
-	assert_equal(2,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(2,box->c_count[1]);
+	assert_equal(2,box->c_count[2]);
+	assert_equal(2,box->c_count[3]);
+	assert_equal(2,box->c_count[4]);
 	assert_equal(-1, inserisci(box,4));
 	assert_equal(0, inserisci(box,3));
 	assert_not_equal(NULL,search(box,3,3));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(2,box->columns_counter[1]);
-	assert_equal(2,box->columns_counter[2]);
-	assert_equal(3,box->columns_counter[3]);
-	assert_equal(3,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(2,box->c_count[1]);
+	assert_equal(2,box->c_count[2]);
+	assert_equal(3,box->c_count[3]);
+	assert_equal(3,box->c_count[4]);
 	assert_equal(0, inserisci(box,2));
 	assert_not_equal(NULL,search(box,2,4));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(2,box->columns_counter[1]);
-	assert_equal(4,box->columns_counter[2]);
-	assert_equal(4,box->columns_counter[3]);
-	assert_equal(3,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(2,box->c_count[1]);
+	assert_equal(4,box->c_count[2]);
+	assert_equal(4,box->c_count[3]);
+	assert_equal(3,box->c_count[4]);
 	free(box);
 	// visualizza(box);
 }
@@ -149,24 +237,24 @@ void should_insert_sequence_2(){
 	rbtree *box = scatola(9);
 	assert_equal(0, inserisci(box,1));
 	assert_not_equal(NULL,search(box,1,1));
-	assert_equal(1,box->columns_counter[1]);
-	assert_equal(1,box->columns_counter[2]);
+	assert_equal(1,box->c_count[1]);
+	assert_equal(1,box->c_count[2]);
 
 	
 	assert_equal(0, inserisci(box,4));
 	assert_not_equal(NULL,search(box,4,1));
-	assert_equal(1,box->columns_counter[1]);
-	assert_equal(1,box->columns_counter[2]);
-	assert_equal(1,box->columns_counter[4]);
-	assert_equal(1,box->columns_counter[5]);
+	assert_equal(1,box->c_count[1]);
+	assert_equal(1,box->c_count[2]);
+	assert_equal(1,box->c_count[4]);
+	assert_equal(1,box->c_count[5]);
 	
 	assert_equal(0, inserisci(box,2));
 	assert_not_equal(NULL,search(box,1,1));
-	assert_equal(1,box->columns_counter[1]);
-	assert_equal(2,box->columns_counter[2]);
-	assert_equal(2,box->columns_counter[3]);
-	assert_equal(1,box->columns_counter[4]);
-	assert_equal(1,box->columns_counter[5]);
+	assert_equal(1,box->c_count[1]);
+	assert_equal(2,box->c_count[2]);
+	assert_equal(2,box->c_count[3]);
+	assert_equal(1,box->c_count[4]);
+	assert_equal(1,box->c_count[5]);
 
 	assert_equal(0, inserisci(box,5));
 	assert_not_equal(NULL,search(box,5,2));
@@ -181,64 +269,310 @@ void should_insert_sequence_2(){
 	assert_equal(0, inserisci(box,0));
 	assert_not_equal(NULL,search(box,0,5));
 	
-	assert_equal(5,box->columns_counter[0]);
-	assert_equal(5,box->columns_counter[1]);
-	assert_equal(4,box->columns_counter[2]);
-	assert_equal(4,box->columns_counter[3]);
-	assert_equal(4,box->columns_counter[4]);
-	assert_equal(2,box->columns_counter[5]);
-	assert_equal(3,box->columns_counter[6]);
-	assert_equal(3,box->columns_counter[7]);
+	assert_equal(5,box->c_count[0]);
+	assert_equal(5,box->c_count[1]);
+	assert_equal(4,box->c_count[2]);
+	assert_equal(4,box->c_count[3]);
+	assert_equal(4,box->c_count[4]);
+	assert_equal(2,box->c_count[5]);
+	assert_equal(3,box->c_count[6]);
+	assert_equal(3,box->c_count[7]);
 
 
 }
-void test_columns_counter(){
+void test_c_count(){
 	rbtree *box = scatola(5);
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(0,box->columns_counter[1]);
-	assert_equal(0,box->columns_counter[2]);
-	assert_equal(0,box->columns_counter[3]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(0,box->c_count[1]);
+	assert_equal(0,box->c_count[2]);
+	assert_equal(0,box->c_count[3]);
 	assert_equal(0,inserisci(box,1));
 	//column counter
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(1,box->columns_counter[1]);
-	assert_equal(1,box->columns_counter[2]);
-	assert_equal(0,box->columns_counter[3]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(1,box->c_count[1]);
+	assert_equal(1,box->c_count[2]);
+	assert_equal(0,box->c_count[3]);
 	assert_equal(0,inserisci(box,2));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(1,box->columns_counter[1]);
-	assert_equal(2,box->columns_counter[2]);
-	assert_equal(2,box->columns_counter[3]);
-	assert_equal(0,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(1,box->c_count[1]);
+	assert_equal(2,box->c_count[2]);
+	assert_equal(2,box->c_count[3]);
+	assert_equal(0,box->c_count[4]);
 	assert_equal(0,inserisci(box,1));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(3,box->columns_counter[1]);
-	assert_equal(3,box->columns_counter[2]);
-	assert_equal(2,box->columns_counter[3]);
-	assert_equal(0,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(3,box->c_count[1]);
+	assert_equal(3,box->c_count[2]);
+	assert_equal(2,box->c_count[3]);
+	assert_equal(0,box->c_count[4]);
 	assert_equal(0,inserisci(box,3));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(3,box->columns_counter[1]);
-	assert_equal(3,box->columns_counter[2]);
-	assert_equal(3,box->columns_counter[3]);
-	assert_equal(3,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(3,box->c_count[1]);
+	assert_equal(3,box->c_count[2]);
+	assert_equal(3,box->c_count[3]);
+	assert_equal(3,box->c_count[4]);
 	assert_equal(0,inserisci(box,2));
-	assert_equal(0,box->columns_counter[0]);
-	assert_equal(3,box->columns_counter[1]);
-	assert_equal(4,box->columns_counter[2]);
-	assert_equal(4,box->columns_counter[3]);
-	assert_equal(3,box->columns_counter[4]);
+	assert_equal(0,box->c_count[0]);
+	assert_equal(3,box->c_count[1]);
+	assert_equal(4,box->c_count[2]);
+	assert_equal(4,box->c_count[3]);
+	assert_equal(3,box->c_count[4]);
 }
 
 
+void should_extract_in_parallel_1(){
+	rbtree *box = scatola(6);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,1));
+	// display(box);
+	free_elements = (int*) estrai_in_parallelo(box);
+	assert_equal(1,free_elements[0]);
+	assert_equal(1,free_elements[1]);
+	assert_equal(4,free_elements[2]);
+	assert_equal(1,free_elements[3]);
+	
+}
 
+void should_extract_in_parallel_2(){
+	rbtree *box = scatola(6);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,1));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,3));
+	free_elements = (int*) estrai_in_parallelo(box);
+	assert_equal(1,free_elements[0]);
+	assert_equal(3,free_elements[1]);
+	assert_equal(0,free_elements[2]);
+	assert_equal(0,free_elements[3]);
+	assert_equal(0,free_elements[4]);
+	assert_equal(0,free_elements[5]);
+
+	
+}
+
+void should_insert_sequence_3(){
+	rbtree *box = scatola(6);
+	int* free_elements;
+	assert_equal(0, inserisci(box,0));
+	assert_not_equal(NULL,search(box,0,1));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,1));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,3));
+	free_elements = (int*) estrai_in_parallelo(box);
+	assert_equal(0,free_elements[0]);
+	assert_equal(1,free_elements[1]);
+	assert_equal(3,free_elements[2]);
+	assert_equal(3,free_elements[3]);
+	assert_equal(0,free_elements[4]);
+	assert_equal(0,free_elements[5]);
+
+	
+}
+
+void should_insert_sequence_4(){
+	rbtree *box = scatola(11);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,1));
+	assert_equal(0, inserisci(box,8));
+	assert_not_equal(NULL,search(box,8,1));
+	assert_equal(0, inserisci(box,0));
+	assert_not_equal(NULL,search(box,0,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,2));
+	assert_equal(0, inserisci(box,7));
+	assert_not_equal(NULL,search(box,7,2));
+	assert_equal(0, inserisci(box,9));
+	assert_not_equal(NULL,search(box,9,2));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,3));
+	assert_equal(0, inserisci(box,6));
+	assert_not_equal(NULL,search(box,6,3));
+	assert_equal(0, inserisci(box,5));
+	assert_not_equal(NULL,search(box,5,4));
+	
+	
+	free_elements = (int*) estrai_in_parallelo(box);
+	assert_equal(0,free_elements[0]);
+	assert_equal(2,free_elements[1]);
+	assert_equal(2,free_elements[2]);
+	assert_equal(2,free_elements[3]);
+	assert_equal(5,free_elements[4]);
+	assert_equal(4,free_elements[5]);
+	assert_equal(9,free_elements[6]);
+	assert_equal(2,free_elements[7]);
+	assert_equal(0,free_elements[8]);
+	assert_equal(0,free_elements[9]);
+    assert_equal(0,free_elements[10]);
+	// visualizza(box);
+}
+
+void should_insert_sequence_5(){
+	rbtree *box = scatola(11);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,6));
+	assert_not_equal(NULL,search(box,6,1));
+	assert_equal(0, inserisci(box,0));
+	assert_not_equal(NULL,search(box,0,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,5));
+	assert_not_equal(NULL,search(box,5,2));
+	assert_equal(0, inserisci(box,8));
+	assert_not_equal(NULL,search(box,8,1));
+	free_elements = (int*) estrai_in_parallelo(box);
+	assert_equal(0,free_elements[0]);
+	assert_equal(2,free_elements[1]);
+	assert_equal(2,free_elements[2]);
+	assert_equal(3,free_elements[3]);
+	assert_equal(5,free_elements[4]);
+	assert_equal(2,free_elements[5]);
+	assert_equal(8,free_elements[6]);
+	assert_equal(1,free_elements[7]);
+	assert_equal(0,free_elements[8]);
+	assert_equal(0,free_elements[9]);
+    assert_equal(0,free_elements[10]);
+	// visualizza(box);
+}
+
+void should_insert_sequence_6(){
+	rbtree *box = scatola(11);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,9));
+	assert_not_equal(NULL,search(box,9,1));
+	assert_equal(0, inserisci(box,8));
+	assert_not_equal(NULL,search(box,8,2));
+	assert_equal(0, inserisci(box,7));
+	assert_not_equal(NULL,search(box,7,3));
+	assert_equal(0, inserisci(box,6));
+	assert_not_equal(NULL,search(box,6,4));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,3));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,4));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,5));
+	free_elements = (int*) estrai_in_parallelo(box);
+	
+	assert_equal(4,free_elements[0]);
+	assert_equal(5,free_elements[1]);
+	assert_equal(6,free_elements[2]);
+	assert_equal(4,free_elements[3]);
+	assert_equal(0,free_elements[4]);
+	assert_equal(0,free_elements[5]);
+	assert_equal(0,free_elements[6]);
+	assert_equal(0,free_elements[7]);
+	assert_equal(0,free_elements[8]);
+	assert_equal(0,free_elements[9]);
+	assert_equal(0,free_elements[10]);
+	// visualizza(box);
+}
+
+void should_insert_sequence_7(){
+	rbtree *box = scatola(11);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,1));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,5));
+	assert_not_equal(NULL,search(box,5,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,3));
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,4));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,4));
+	assert_equal(0, inserisci(box,0));
+	assert_not_equal(NULL,search(box,0,5));
+	free_elements = (int*) estrai_in_parallelo(box);
+	assert_equal(0,free_elements[0]);
+	assert_equal(5,free_elements[1]);
+	assert_equal(3,free_elements[2]);
+	assert_equal(4,free_elements[3]);
+	assert_equal(5,free_elements[4]);
+	assert_equal(2,free_elements[5]);
+	assert_equal(0,free_elements[6]);
+	assert_equal(0,free_elements[7]);
+	assert_equal(0,free_elements[8]);
+	assert_equal(0,free_elements[9]);
+	assert_equal(0,free_elements[10]);
+	// visualizza(box);
+	// display(box);
+}
+
+void should_insert_sequence_8(){
+	rbtree *box = scatola(11);
+	int* free_elements;
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,1));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,5));
+	assert_not_equal(NULL,search(box,5,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,3));
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,4));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,4));
+	assert_equal(0, inserisci(box,0));
+	assert_not_equal(NULL,search(box,0,5));
+	assert_equal(0, inserisci(box,7));
+	assert_not_equal(NULL,search(box,7,1));
+	assert_equal(0, inserisci(box,7));
+	assert_not_equal(NULL,search(box,7,2));
+	free_elements = (int*) estrai_in_parallelo(box);
+
+	assert_equal(0,free_elements[0]);
+	assert_equal(5,free_elements[1]);
+	assert_equal(3,free_elements[2]);
+	assert_equal(4,free_elements[3]);
+	assert_equal(5,free_elements[4]);
+	assert_equal(2,free_elements[5]);
+	assert_equal(7,free_elements[6]);
+	assert_equal(2,free_elements[7]);
+	assert_equal(0,free_elements[8]);
+	assert_equal(0,free_elements[9]);
+	assert_equal(0,free_elements[10]);
+	// visualizza(box);
+	// display(box);
+}
 
 int main(int argc, char **argv) {
 	TestSuite *suite = create_test_suite();
-	// rbtree
+	//rbtree
 	add_test(suite,should_create_a_tree);
 	add_test(suite,should_insert_element);
-	add_test(suite,should_remove_items);
+	add_test(suite,should_remove_an_item);
+	// add_test(suite,should_remove_many_items);  sistemare non cancella se ci sono solo 2 elementi
+	add_test(suite,should_search_many_items);
 	//tools
 	add_test(suite,test_is_lower_than);
 	// scatola(x)
@@ -248,9 +582,19 @@ int main(int argc, char **argv) {
 	// inserisci(x)
 	add_test(suite,should_not_insert_element_in_small_box);
 	add_test(suite,should_not_insert_in_box);
-	add_test(suite,test_columns_counter);
+	add_test(suite,test_c_count);
 	add_test(suite,should_insert_sequence_1);
 	add_test(suite,should_insert_sequence_2);
+	add_test(suite,should_insert_sequence_3);
+	add_test(suite,should_insert_sequence_4);
+	add_test(suite,should_insert_sequence_5);
+	add_test(suite,should_insert_sequence_6);
+	add_test(suite,should_insert_sequence_7);
+	add_test(suite,should_insert_sequence_8);	
 	// elimina (x)
+	
+	// estrazione in parallelo
+	add_test(suite,should_extract_in_parallel_1);
+	add_test(suite,should_extract_in_parallel_2);
 	return run_test_suite(suite, create_text_reporter());
 }
