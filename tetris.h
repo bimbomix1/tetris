@@ -10,6 +10,7 @@ typedef struct rbnode rbnode;
 typedef struct {
 	int size;
 	int* c_count;
+	int h;
 	rbnode *root, *nil;
 }rbtree;
 
@@ -26,6 +27,7 @@ rbnode *search(rbtree *r, int p, int l);
 
 void visualizza(rbtree *p);
 void display(rbtree *p);
+void statistica(int, int, int);
 int* estrai_in_parallelo (rbtree*);
 //prototipi tools
 int is_lower_than(int pa, int la, int pb, int lb);

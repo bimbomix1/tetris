@@ -12,6 +12,7 @@ rbtree *scatola(int x){
 	if (x <= 1)
 		return NULL;
 	rbtree* temp = createrbtree();
+	temp->h = 0;
 	temp->size = x;
 	temp->c_count = malloc((x) * sizeof (int));
 	for(size_t i = 0; i <= temp->size; ++i)
@@ -31,12 +32,10 @@ int inserisci(rbtree* box, int x){
 	// inserisci elemento
 	rbinsert(box,x,base+1);
 	// sistema contatore colonne
-
 	box->c_count[x] = base + 1;
 	box->c_count[x+1] = base + 1;
-	
-	
-	return 0;
+	box->h = (base+1) > box->h ? base+1: box->h ; 
+    return 0;
 }
 
 
@@ -381,11 +380,42 @@ void inorderadv(rbnode *p, rbnode *nil)
 
 void visualizza(rbtree *p)
 {
+
 	grid = malloc(p->size * sizeof(int));
 	size = p->size;
 	inorderadv(p->root, p->nil);
 	print_row(grid, p->size);
 	
+}
+
+void init_random_number() { 
+  srand( time( NULL ) ); /* inizializza un seme casuale per il generatore pseudo-casuale
+			    tramite il clock di sistema */
+}
+
+int random_number( int l, int r ){
+  return ( rand() % ( r - l ) + l ); /* genera un numero casuale tra l e r-1 */
+}
+
+void statistica(int n, int m, int k){
+	float media = 0;
+	int i = 0;
+	init_random_number();
+	while(i < k){
+		rbtree *box = scatola(m);
+		for(size_t j = 0; j < n; ++j)
+		{
+			while(-1 == inserisci(box,random_number(0,m)));
+		}
+		media+= (float)( (float) box->h / (float) n);
+		free(box);
+		i++;
+	}
+	
+	
+	
+		
+		printf("valore medio = %f\n", media/k);
 }
 
 int* estrai_in_parallelo(rbtree* box){

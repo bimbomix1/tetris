@@ -180,12 +180,16 @@ void should_not_insert_in_box(){
 	rbtree *box = scatola(5);
 	assert_equal(0,inserisci(box,3));
 	assert_equal(0,inserisci(box,1));
+	
 	assert_equal(0,inserisci(box,2)); // pay attention
+	assert_equal(2,box->h);
 }
 
 void should_not_insert_element_in_small_box(){
 	rbtree *box = scatola(2);
 	assert_equal(-1,inserisci(box,1));
+	assert_equal(0,box->h);
+	
 }
 
 void should_insert_sequence_1(){
@@ -229,8 +233,10 @@ void should_insert_sequence_1(){
 	assert_equal(4,box->c_count[2]);
 	assert_equal(4,box->c_count[3]);
 	assert_equal(3,box->c_count[4]);
-	free(box);
-	// visualizza(box);
+	assert_equal(4,box->h);
+	
+	//free(box);
+	//visualizza(box);
 }
 
 void should_insert_sequence_2(){
@@ -277,7 +283,9 @@ void should_insert_sequence_2(){
 	assert_equal(2,box->c_count[5]);
 	assert_equal(3,box->c_count[6]);
 	assert_equal(3,box->c_count[7]);
-
+	assert_equal(5,box->h);
+	
+//	visualizza(box);
 
 }
 void test_c_count(){
@@ -316,6 +324,9 @@ void test_c_count(){
 	assert_equal(4,box->c_count[2]);
 	assert_equal(4,box->c_count[3]);
 	assert_equal(3,box->c_count[4]);
+	assert_equal(4,box->h);
+	
+//	visualizza(box);
 }
 
 
@@ -565,6 +576,30 @@ void should_insert_sequence_8(){
 	// display(box);
 }
 
+
+void should_get_statistica(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	assert_equal(0, inserisci(box,4));
+	assert_not_equal(NULL,search(box,4,1));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,2));
+	assert_equal(0, inserisci(box,5));
+	assert_not_equal(NULL,search(box,5,2));
+	assert_equal(0, inserisci(box,2));
+	assert_not_equal(NULL,search(box,2,3));
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,4));
+	assert_equal(0, inserisci(box,3));
+	assert_not_equal(NULL,search(box,3,4));
+	assert_equal(0, inserisci(box,0));
+	assert_not_equal(NULL,search(box,0,5));
+	//inserisci n elementi in una scatolad i dimensioni m  20 volte
+	// statistica(800,40,2000);
+	
+}
+
 int main(int argc, char **argv) {
 	TestSuite *suite = create_test_suite();
 	//rbtree
@@ -596,5 +631,9 @@ int main(int argc, char **argv) {
 	// estrazione in parallelo
 	add_test(suite,should_extract_in_parallel_1);
 	add_test(suite,should_extract_in_parallel_2);
+	
+	//statistica
+	
+	add_test(suite,should_get_statistica);
 	return run_test_suite(suite, create_text_reporter());
 }
