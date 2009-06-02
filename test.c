@@ -595,8 +595,51 @@ void should_get_statistica(){
 	assert_not_equal(NULL,search(box,3,4));
 	assert_equal(0, inserisci(box,0));
 	assert_not_equal(NULL,search(box,0,5));
-	//inserisci n elementi in una scatolad i dimensioni m  20 volte
+	// inserisci n elementi in una scatolad i dimensioni m  20 volte
 	// statistica(800,40,2000);
+	
+}
+
+void should_get_sottocatasta_1(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,1));
+	assert_not_equal(NULL,search(box,1,1));
+	// assert_not_equal(NULL, sottocatasta(box,1));
+	// assert_equal(-1, sottocatasta(box,0));
+	// assert_equal(-1, sottocatasta(box,2));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+		assert_equal(0, inserisci(box,3));
+				assert_equal(0, inserisci(box,1));
+				assert_equal(0, inserisci(box,2));
+				assert_equal(0, inserisci(box,5));
+				assert_equal(0, inserisci(box,5));
+				assert_equal(0, inserisci(box,5));
+				assert_equal(0, inserisci(box,5));
+	// assert_not_equal(NULL, sottocatasta(box,1));
+	// assert_equal(-1, sottocatasta(box,0));
+	assert_equal(-1, sottocatasta(box,2));
+	visualizza(box);
+
+}
+
+
+void should_find_if_is_block_1(){
+	
+}
+
+void should_find_if_is_block_2(){
+	
+}
+void should_find_if_is_block_3(){
+	
+}
+void should_find_if_is_block_4(){
+	
+}
+void should_find_if_is_block_5(){
 	
 }
 
@@ -633,7 +676,17 @@ int main(int argc, char **argv) {
 	add_test(suite,should_extract_in_parallel_2);
 	
 	//statistica
-	
 	add_test(suite,should_get_statistica);
+	
+	//sottocastasta(x)
+	add_test(suite,should_get_sottocatasta_1);
+	
+	// is_block ?
+	add_test(suite, should_find_if_is_block_1);
+	add_test(suite, should_find_if_is_block_2);
+	add_test(suite, should_find_if_is_block_3);
+	add_test(suite, should_find_if_is_block_4);
+	add_test(suite, should_find_if_is_block_5);
 	return run_test_suite(suite, create_text_reporter());
+	
 }

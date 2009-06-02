@@ -6,6 +6,12 @@
 int *grid;
 int size;
 int currentLine = NULL;
+int* catasta_list = NULL;
+int current_level;
+int* current_row;
+int* next_row;
+int trovato = 0;
+rbnode* catasta_start_node;
 // FUNZIONI TETRIS
 
 rbtree *scatola(int x){
@@ -397,6 +403,106 @@ int random_number( int l, int r ){
   return ( rand() % ( r - l ) + l ); /* genera un numero casuale tra l e r-1 */
 }
 
+void catasta(rbnode *n, rbnode *nil){
+	if(n != nil) {
+		catasta(n->left,nil);
+	    if (current_level == NULL)
+		   	  current_level = n->l;
+		// printf("prova \n \n");
+		// printf("i valori riscontrati sono : n->l = %d  current_level => %d, catasta_start_node->l =%d \n",n->l, current_level ,catasta_start_node->l);
+   	    if ( n->l != current_level && n->l != catasta_start_node->l && next_row != NULL){
+		// printf( "cambio livello \n");
+			current_level = n->l;
+			// printf("============PRIMA =============== \n");
+			// 					printf("riga corrente \n ");
+			// 																					for(size_t i = 0; i < size; ++i)
+			// 																					{
+			// 																						printf("%d - ",current_row[i]);
+			// 																					}
+			// 																	printf("\n riga seguente \n ");
+			// 																										for(size_t j = 0; j < size; ++j)
+			// 																										{
+			// 																											printf("%d - ",next_row[j]);
+			// 																										}
+								int* temp = current_row;
+																		current_row = next_row;
+																		next_row = temp;
+				
+		// printf("\n============DOPO =============== \n");
+		// 											printf("riga corrente \n ");
+		// 											for(size_t i = 0; i < size; ++i)
+		// 											{
+		// 												printf("%d - ",current_row[i]);
+		// 											}
+		// 											printf("\n riga seguente \n ");
+		// 											for(size_t j = 0; j < size; ++j)
+		// 											{
+		// 												printf("%d - ",next_row[j]);
+		// 											}
+		// 											printf("\n \n \n \n \n");
+	}
+	
+	if (catasta_start_node->p == n->p && catasta_start_node->l == n->l){
+		printf("area sfigata \n \n ");
+		trovato = 1;
+		/* LIVELLO E ELEMENTO TROVATO */
+		// abbiamo trovato il nodo e generiamo i successivi elementi
+		printf("l'elemento (%d,%d) ha per sottocatasta => ",n->p, n->l );
+		// printf(" (%d,%d) ",n->p-1,n->l-1);
+		// printf(" (%d,%d) ",n->p,n->l-1);
+		// printf(" (%d,%d) \n",n->p+1,n->l-1);
+		current_row = malloc((size) * sizeof (int));
+		next_row = malloc((size) * sizeof (int));
+		// for(size_t i = 0; i < size; ++i)
+		// {
+		// 	current_row[i] = 0;
+		// 	next_row[i] = 0;
+		// }
+		// attento che non produca valori limite che escano dalla scatola fare!!!
+		next_row[n->p-1] = n->l-1;
+		next_row[n->p] = n->l-1;
+		next_row[n->p+1] = n->l-1;
+		
+		
+	}else{
+		if (trovato == 1 ){
+			// printf("n ->p = %d   current_row[n->p] = %d current level = %d \n",n->p,current_level);
+			// if(next_row[n->p] != 0)
+			// 			printf("beccato \n");
+		 	// for(size_t i = 0; i < size; ++i){
+		 	// 															printf("%d - ",next_row[i]);
+		 	// 					}
+		 	// 					printf("\n");
+			// printf("passato \n ");
+			if (current_level != NULL){
+				// printf("ora");
+				if (current_row[n->p] == current_level){
+				// 				printf("\n entrato\n");
+								printf(" (%d,%d) ", n->p, n->l);
+												next_row[n->p-1] = n->l-1;
+												next_row[n->p] = n->l-1;
+												next_row[n->p+1] = n->l-1;																										next_row[n->p+1] = n->l-1;
+				}
+			}
+		}
+	}
+	catasta(n->right,nil);	
+	} 
+}
+
+
+int* sottocatasta(rbtree* box, int x){
+	size = box->size;
+	current_level =NULL;
+	trovato = 0;
+	catasta_start_node = search(box,x,box->c_count[x]);
+	if (catasta_start_node){
+		catasta(box->root, box->nil);
+		return 0;
+	}
+	return -1;
+}
+
 void statistica(int n, int m, int k){
 	float media = 0;
 	int i = 0;
@@ -412,9 +518,6 @@ void statistica(int n, int m, int k){
 		i++;
 	}
 	
-	
-	
-		
 		printf("valore medio = %f\n", media/k);
 }
 
@@ -443,6 +546,7 @@ int* estrai_in_parallelo(rbtree* box){
 						break;
 				}
 			}
+			
 			free_elements[j] = (count % 2) != 0 ? i+1 : i;
             free_elements[j+1] = box->c_count[i];
 			j = j+2;
@@ -453,6 +557,8 @@ int* estrai_in_parallelo(rbtree* box){
 
 	return free_elements;
 }
+
+
 
 void print_row(int *grid, int size){
 	int n = 0;
