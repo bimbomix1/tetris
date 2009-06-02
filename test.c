@@ -612,7 +612,6 @@ void should_get_sottocatasta_1(){
 	assert_equal(0, inserisci(box,3));
 	assert_equal(0, inserisci(box,2));
 		assert_equal(0, inserisci(box,3));
-				assert_equal(0, inserisci(box,1));
 				assert_equal(0, inserisci(box,2));
 				assert_equal(0, inserisci(box,5));
 				assert_equal(0, inserisci(box,5));
@@ -620,7 +619,7 @@ void should_get_sottocatasta_1(){
 				assert_equal(0, inserisci(box,5));
 	// assert_not_equal(NULL, sottocatasta(box,1));
 	// assert_equal(-1, sottocatasta(box,0));
-	assert_equal(-1, sottocatasta(box,2));
+	// assert_equal(-1, sottocatasta(box,2));  // decommenta
 	visualizza(box);
 
 }
