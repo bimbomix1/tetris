@@ -596,7 +596,7 @@ void should_get_statistica(){
 	assert_equal(0, inserisci(box,0));
 	assert_not_equal(NULL,search(box,0,5));
 	// inserisci n elementi in una scatolad i dimensioni m  20 volte
-	// statistica(800,40,2000);
+	statistica(60,10,100);
 	
 }
 
@@ -611,19 +611,306 @@ void should_get_sottocatasta_1(){
 	assert_equal(0, inserisci(box,3));
 	assert_equal(0, inserisci(box,3));
 	assert_equal(0, inserisci(box,2));
-		assert_equal(0, inserisci(box,3));
-				assert_equal(0, inserisci(box,2));
-				assert_equal(0, inserisci(box,5));
-				assert_equal(0, inserisci(box,5));
-				assert_equal(0, inserisci(box,5));
-				assert_equal(0, inserisci(box,5));
-	// assert_not_equal(NULL, sottocatasta(box,1));
-	// assert_equal(-1, sottocatasta(box,0));
-	// assert_equal(-1, sottocatasta(box,2));  // decommenta
-	visualizza(box);
-
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,6));
+	assert_equal(0, inserisci(box,5));
+	list l = sottocatasta(box,5);
+	assert_not_equal(NULL, l);
+	assert_equal(6, l->p);
+	assert_equal(6, l->l);
+	l = l->next;
+	assert_equal(5, l->p);
+	assert_equal(5, l->l);
+	l = l->next;
+	assert_equal(5, l->p);
+	assert_equal(4, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(NULL, l);
 }
 
+
+void should_get_sottocatasta_2(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,0));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,5));
+	list l = sottocatasta(box,4);
+	assert_equal(NULL, l);
+	l = sottocatasta(box,5);
+	assert_equal(4, l->p);
+	assert_equal(5, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(4, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(5, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(NULL, l);
+	l = sottocatasta(box,0);
+	assert_equal(1, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(NULL, l);
+	l = sottocatasta(box,3);
+	assert_equal(4, l->p);
+	assert_equal(5, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(4, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(5, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(1, l->l);
+}
+void should_get_sottocatasta_3(){
+	rbtree *box = scatola(11);
+	list l;
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(NULL,sottocatasta(box,0));
+	assert_not_equal(NULL,l = sottocatasta(box,1));
+	assert_equal(2, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(2, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_not_equal(NULL,l = sottocatasta(box,3));
+	assert_equal(2, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(3, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(2, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(NULL,l);
+}
+
+void should_get_sottocatasta_4(){
+	rbtree *box = scatola(11);
+	list l;
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,9));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,8));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,8));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	// visualizza(box);
+	
+	assert_not_equal(NULL,l = sottocatasta(box,2));
+	assert_equal(3, l->p);
+	assert_equal(4, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(1, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(4, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(2, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(5, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_equal(NULL,l);
+}
+
+void should_get_sottocatasta_esempio_requisiti(){
+	rbtree *box = scatola(11);
+	list l;
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	// visualizza(box);
+	assert_not_equal(NULL,l = sottocatasta(box,2));	
+	assert_equal(3, l->p);
+	assert_equal(4, l->l);
+	l = l->next;
+	assert_equal(2, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	assert_equal(1, l->p);
+	assert_equal(2, l->l);
+	l = l->next;
+	assert_equal(1, l->p);
+	assert_equal(1, l->l);
+	l = l->next;
+	assert_not_equal(NULL,l);
+	// assert_equal(4, l->p);
+	// 	assert_equal(1, l->l);
+	// 	l = l->next;
+}
+
+void should_get_anticatasta_1(){
+	rbtree *box = scatola(11);
+	list l;
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,9));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,8));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,8));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	// assert_equal(NULL,l = anticatasta(box,2));
+	// assert_equal(NULL,l = anticatasta(box,0));
+	assert_not_equal(NULL, l = anticatasta(box,1));
+	// assert_equal(2, l->p);
+	// assert_equal(5, l->l);
+	// l = l->next;
+	// assert_equal(NULL,l);
+	// assert_not_equal(NULL,l = anticatasta(box,7));
+	// assert_equal(8, l->p);
+	// assert_equal(2, l->l);
+	// l = l->next;
+	// assert_equal(8, l->p);
+	// assert_equal(3, l->l);
+	// l = l->next;
+	// assert_equal(NULL,l);
+	// assert_equal(NULL, l = anticatasta(box,3));
+	// assert_equal(NULL, l = anticatasta(box,4));
+	// assert_equal(NULL, l = anticatasta(box,6));
+	visualizza(box);
+	printf("\n \n \n \n \n");
+	// assert_equal(3, l->p);
+	// assert_equal(4, l->l);
+	// l = l->next;
+	// visualizza(box);
+}
+
+void should_get_anticatasta_2(){
+	rbtree *box = scatola(11);
+	list l;
+	
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,0));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(NULL, l = anticatasta(box,0));
+	assert_equal(NULL, l = anticatasta(box,1));
+	assert_equal(NULL, l = anticatasta(box,2));
+	assert_equal(NULL, l = anticatasta(box,3));
+	assert_equal(NULL, l = anticatasta(box,4));
+	assert_equal(NULL, l = anticatasta(box,5));	
+	assert_equal(NULL, l = anticatasta(box,6));
+
+}
+void should_get_anticatasta_3(){
+	rbtree *box = scatola(11);
+	list l;
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,4));
+	// assert_equal(NULL, l = anticatasta(box,0));
+	// assert_equal(NULL, l = anticatasta(box,1));
+	// assert_equal(NULL, l = anticatasta(box,2));
+	assert_not_equal(NULL, l = anticatasta(box,3));
+	// assert_equal(4, l->p);
+	// assert_equal(5, l->l);
+	// l = l->next;
+	// assert_equal(NULL,l);
+	display(box);
+	visualizza(box);
+}
+
+void should_get_anticatasta_4(){
+	
+}
+
+void should_get_anticatasta_esempio_requisiti(){
+	
+}
 
 void should_find_if_is_block_1(){
 	
@@ -644,48 +931,61 @@ void should_find_if_is_block_5(){
 
 int main(int argc, char **argv) {
 	TestSuite *suite = create_test_suite();
-	//rbtree
-	add_test(suite,should_create_a_tree);
-	add_test(suite,should_insert_element);
-	add_test(suite,should_remove_an_item);
-	// add_test(suite,should_remove_many_items);  sistemare non cancella se ci sono solo 2 elementi
-	add_test(suite,should_search_many_items);
-	//tools
-	add_test(suite,test_is_lower_than);
-	// scatola(x)
-	add_test(suite,should_create_a_box);
-	add_test(suite,should_not_create_a_box_with_size_zero);
-	add_test(suite,should_not_create_a_box_with_size_one);
-	// inserisci(x)
-	add_test(suite,should_not_insert_element_in_small_box);
-	add_test(suite,should_not_insert_in_box);
-	add_test(suite,test_c_count);
-	add_test(suite,should_insert_sequence_1);
-	add_test(suite,should_insert_sequence_2);
-	add_test(suite,should_insert_sequence_3);
-	add_test(suite,should_insert_sequence_4);
-	add_test(suite,should_insert_sequence_5);
-	add_test(suite,should_insert_sequence_6);
-	add_test(suite,should_insert_sequence_7);
-	add_test(suite,should_insert_sequence_8);	
-	// elimina (x)
-	
-	// estrazione in parallelo
-	add_test(suite,should_extract_in_parallel_1);
-	add_test(suite,should_extract_in_parallel_2);
-	
-	//statistica
-	add_test(suite,should_get_statistica);
-	
-	//sottocastasta(x)
-	add_test(suite,should_get_sottocatasta_1);
-	
-	// is_block ?
-	add_test(suite, should_find_if_is_block_1);
-	add_test(suite, should_find_if_is_block_2);
-	add_test(suite, should_find_if_is_block_3);
-	add_test(suite, should_find_if_is_block_4);
-	add_test(suite, should_find_if_is_block_5);
+	// // rbtree
+	// 	add_test(suite,should_create_a_tree);
+	// 	add_test(suite,should_insert_element);
+	// 	add_test(suite,should_remove_an_item);
+	// 	// add_test(suite,should_remove_many_items);  sistemare non cancella se ci sono solo 2 elementi
+	// 	add_test(suite,should_search_many_items);
+	// 	//tools
+	// 	add_test(suite,test_is_lower_than);
+	// 	// scatola(x)
+	// 	add_test(suite,should_create_a_box);
+	// 	add_test(suite,should_not_create_a_box_with_size_zero);
+	// 	add_test(suite,should_not_create_a_box_with_size_one);
+	// 	// inserisci(x)
+	// 	add_test(suite,should_not_insert_element_in_small_box);
+	// 	add_test(suite,should_not_insert_in_box);
+	// 	add_test(suite,test_c_count);
+	// 	add_test(suite,should_insert_sequence_1);
+	// 	add_test(suite,should_insert_sequence_2);
+	// 	add_test(suite,should_insert_sequence_3);
+	// 	add_test(suite,should_insert_sequence_4);
+	// 	add_test(suite,should_insert_sequence_5);
+	// 	add_test(suite,should_insert_sequence_6);
+	// 	add_test(suite,should_insert_sequence_7);
+	// 	add_test(suite,should_insert_sequence_8);	
+	// 	// elimina (x)
+	// 	
+	// 	// estrazione in parallelo
+	// 	add_test(suite,should_extract_in_parallel_1);
+	// 	add_test(suite,should_extract_in_parallel_2);
+	// 
+	// //statistica
+	// add_test(suite,should_get_statistica);
+	// 
+	// //sottocastasta(x)
+	// add_test(suite,should_get_sottocatasta_1);
+	// add_test(suite,should_get_sottocatasta_2);
+	// add_test(suite,should_get_sottocatasta_3);
+	// add_test(suite,should_get_sottocatasta_4);
+	// add_test(suite,should_get_sottocatasta_esempio_requisiti);
+	// 
+	// // anticatasta(x)
+	add_test(suite, should_get_anticatasta_1);
+	// add_test(suite, should_get_anticatasta_2);
+	add_test(suite, should_get_anticatasta_3);
+	// add_test(suite, should_get_anticatasta_4);
+	// add_test(suite,should_get_anticatasta_esempio_requisiti);
+				
+	// 
+	// // is_block ?
+	// add_test(suite, should_find_if_is_block_1);
+	// add_test(suite, should_find_if_is_block_2);
+	// add_test(suite, should_find_if_is_block_3);
+	// add_test(suite, should_find_if_is_block_4);
+	// add_test(suite, should_find_if_is_block_5);
 	return run_test_suite(suite, create_text_reporter());
 	
 }
+

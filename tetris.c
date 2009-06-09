@@ -2,16 +2,50 @@
 #include <stdlib.h>
 #include "tetris.h"
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
+#define TESTING
+
+
 // for visualizza
 int *grid;
 int size;
 int currentLine = NULL;
-int* catasta_list = NULL;
 int current_level;
 int* current_row;
 int* next_row;
-int trovato = 0;
-rbnode* catasta_start_node;
+int trovato = 0, last_row_is_empty_row = 1;
+
+
+// catasta
+list catasta_list;
+rbnode* catasta_node;
+
+
+
+	int IsEmpty( list s ) { return ( s == NULL ); }
+
+	void ListInsert( list *s, int p, int l ) {
+	  list t;
+	  if ( IsEmpty( *s )  ) {
+	    t = malloc( sizeof( struct node ) );
+	    t->p = p;
+		t->l = l;
+	    t->next = *s;
+	    *s = t;
+	    return ;
+	  }
+	  t = *s;
+	  while ( ( t->next ) ) t = t->next;
+	    list q = malloc( sizeof( struct node ) );
+	    q->p = p;
+		q->l = l;
+	    q->next = t->next;
+	    t->next = q;
+	}
+	void ListPrint(list *l){
+	   for (list t = l; t != NULL; t = t->next )
+	   printf( " (%d,%d)", t->p, t->l );
+	}
+
 // FUNZIONI TETRIS
 
 rbtree *scatola(int x){
@@ -403,104 +437,178 @@ int random_number( int l, int r ){
   return ( rand() % ( r - l ) + l ); /* genera un numero casuale tra l e r-1 */
 }
 
-void catasta(rbnode *n, rbnode *nil){
+void acatasta(rbnode *n, rbnode *nil){
 	if(n != nil) {
-		catasta(n->left,nil);
+		
+	acatasta(n->right,nil);	
+	if (current_level == NULL)
+		 current_level = n->l;
+		 			// printf("i valori riscontrati sono : n->l = %d  current_level => %d, catasta_node->l =%d \n",n->l, current_level ,catasta_node->l);
+		 	   	    if ( n->l != current_level && n->l != catasta_node->l && next_row != NULL){
+		 			// printf( "cambio livello \n");
+		 				current_level = n->l;
+						// printf("impostato livello a %d \n", n->l);
+						// 												printf("============PRIMA =============== \n");
+						// 												printf("riga corrente \n "); for(size_t i = 0; i < size; ++i) { printf("%d - ",current_row[i]);}
+						// 												printf("\n riga seguente \n "); for(size_t j = 0; j < size; ++j) {printf("%d - ",next_row[j]);}
+						if (!last_row_is_empty_row){																								
+								int* temp = current_row;
+								current_row = next_row;
+								next_row = temp;
+								
+						}									
+						// printf("\n============DOPO =============== \n");
+						// 											 				printf("riga corrente \n "); for(size_t i = 0; i < size; ++i){printf("%d - ",current_row[i]);}
+						// 											 				printf("\n riga seguente \n "); for(size_t j = 0; j < size; ++j) { printf("%d - ",next_row[j]);}
+						// 											                printf("\n \n \n \n \n");
+		 		}
+		 
+		 		if (catasta_node->p == n->p && catasta_node->l == n->l){
+		 			// printf("area sfigata \n \n trovata per elemento (%d, %d)  ", n->p, n->l);
+		 			trovato = 1;
+					// last_row_is_empty_row = 1;
+		 			/* LIVELLO E ELEMENTO TROVATO */
+		 			// abbiamo trovato il nodo e generiamo i successivi elementi
+		 			// printf("(%d,%d) =sotto> ",n->p, n->l );
+		 			// 	 			 			printf(" (%d,%d) ",n->p-1,n->l+1);
+		 			// 	 			 			printf(" (%d,%d) ",n->p,n->l+1);
+		 			// 	 			 			printf(" (%d,%d) \n",n->p+1,n->l+1);
+		 			current_row = malloc((size) * sizeof (int));
+		 			next_row = malloc((size) * sizeof (int));
+		 			// for(size_t i = 0; i < size; ++i)
+		 			// {
+		 			// 	current_row[i] = 0;
+		 			// 	next_row[i] = 0;
+		 			// }
+		 			// attento che non produca valori limite che escano dalla scatola fare!!!
+		 			next_row[n->p-1] = n->l+1;
+		 			next_row[n->p] = n->l+1;
+		 			next_row[n->p+1] = n->l+1;
+		 			last_row_is_empty_row = 1;
+		
+		 
+		 		}else{
+		 			if (trovato == 1 ){
+		 				// printf("n ->p = %d   current_row[n->p] = %d current level = %d \n",n->p,current_level);
+		 				// if(next_row[n->p] != 0)
+		 				// 			printf("beccato \n");
+		 			 	// for(size_t i = 0; i < size; ++i){
+		 			 	// 															printf("%d - ",next_row[i]);
+		 			 	// 					}
+		 			 	// 					printf("\n");
+		 				// printf("passato \n ");
+		 				if (current_level != NULL){
+							// printf("last row = %d \n", last_row_is_empty_row);
+							if (last_row_is_empty_row){																								
+																			int* temp = current_row;
+																				current_row = next_row;
+																				next_row = temp;
+																				
+																			}
+		 					if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 8)){
+		 							
+	
+									printf(" (%d,%d) ", n->p, n->l);
+									last_row_is_empty_row = 0;
+									ListInsert( &catasta_list, n->p ,n->l);
+										            current_row[n->p] = 0;
+													next_row[n->p-1] = n->l+1;
+													next_row[n->p] = n->l+1;
+													next_row[n->p+1] = n->l+1;																										next_row[n->p+1] = n->l-1;
+					}
+				}
+			}
+		}
+			
+	acatasta(n->left,nil);
+	
+	
+	} 
+}
+void scatasta(rbnode *n, rbnode *nil){
+	if(n != nil) {
+		scatasta(n->left,nil);
+		// se abbiamo iniziato 
 	    if (current_level == NULL)
 		   	  current_level = n->l;
-		// printf("prova \n \n");
-		// printf("i valori riscontrati sono : n->l = %d  current_level => %d, catasta_start_node->l =%d \n",n->l, current_level ,catasta_start_node->l);
-   	    if ( n->l != current_level && n->l != catasta_start_node->l && next_row != NULL){
-		// printf( "cambio livello \n");
+		// se c'è un cambio di livello
+   	    if ( n->l != current_level && n->l != catasta_node->l && next_row != NULL){
 			current_level = n->l;
-			// printf("============PRIMA =============== \n");
-			// 					printf("riga corrente \n ");
-			// 																					for(size_t i = 0; i < size; ++i)
-			// 																					{
-			// 																						printf("%d - ",current_row[i]);
-			// 																					}
-			// 																	printf("\n riga seguente \n ");
-			// 																										for(size_t j = 0; j < size; ++j)
-			// 																										{
-			// 																											printf("%d - ",next_row[j]);
-			// 																										}
-								int* temp = current_row;
-																		current_row = next_row;
-																		next_row = temp;
-				
-		// printf("\n============DOPO =============== \n");
-		// 											printf("riga corrente \n ");
-		// 											for(size_t i = 0; i < size; ++i)
-		// 											{
-		// 												printf("%d - ",current_row[i]);
-		// 											}
-		// 											printf("\n riga seguente \n ");
-		// 											for(size_t j = 0; j < size; ++j)
-		// 											{
-		// 												printf("%d - ",next_row[j]);
-		// 											}
-		// 											printf("\n \n \n \n \n");
-	}
+			int* temp = current_row;
+			current_row = next_row;
+			next_row = temp;
+		}
 	
-	if (catasta_start_node->p == n->p && catasta_start_node->l == n->l){
-		printf("area sfigata \n \n ");
-		trovato = 1;
-		/* LIVELLO E ELEMENTO TROVATO */
-		// abbiamo trovato il nodo e generiamo i successivi elementi
-		printf("l'elemento (%d,%d) ha per sottocatasta => ",n->p, n->l );
-		// printf(" (%d,%d) ",n->p-1,n->l-1);
-		// printf(" (%d,%d) ",n->p,n->l-1);
-		// printf(" (%d,%d) \n",n->p+1,n->l-1);
-		current_row = malloc((size) * sizeof (int));
-		next_row = malloc((size) * sizeof (int));
-		// for(size_t i = 0; i < size; ++i)
-		// {
-		// 	current_row[i] = 0;
-		// 	next_row[i] = 0;
-		// }
-		// attento che non produca valori limite che escano dalla scatola fare!!!
-		next_row[n->p-1] = n->l-1;
-		next_row[n->p] = n->l-1;
-		next_row[n->p+1] = n->l-1;
-		
-		
-	}else{
+	   if (catasta_node->p == n->p && catasta_node->l == n->l){
+	    	trovato = 1;
+		    current_row = malloc((size) * sizeof (int));
+		    next_row = malloc((size) * sizeof (int));
+		    next_row[n->p-1] = n->l-1;
+		    next_row[n->p] = n->l-1;
+	    	next_row[n->p+1] = n->l-1;
+	    }else{
 		if (trovato == 1 ){
-			// printf("n ->p = %d   current_row[n->p] = %d current level = %d \n",n->p,current_level);
-			// if(next_row[n->p] != 0)
-			// 			printf("beccato \n");
-		 	// for(size_t i = 0; i < size; ++i){
-		 	// 															printf("%d - ",next_row[i]);
-		 	// 					}
-		 	// 					printf("\n");
-			// printf("passato \n ");
 			if (current_level != NULL){
-				// printf("ora");
-				if (current_row[n->p] == current_level){
-				// 				printf("\n entrato\n");
-								printf(" (%d,%d) ", n->p, n->l);
-												next_row[n->p-1] = n->l-1;
-												next_row[n->p] = n->l-1;
-												next_row[n->p+1] = n->l-1;																										next_row[n->p+1] = n->l-1;
+				if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 6)){
+					// printf(" (%d,%d) ", n->p, n->l);
+					ListInsert( &catasta_list, n->p ,n->l);
+					current_row[n->p] = 0;
+					next_row[n->p-1] = n->l-1;
+					next_row[n->p] = n->l-1;
+					next_row[n->p+1] = n->l-1;																										next_row[n->p+1] = n->l-1;
 				}
 			}
 		}
 	}
-	catasta(n->right,nil);	
+	scatasta(n->right,nil);	
 	} 
 }
 
 
-int* sottocatasta(rbtree* box, int x){
-	size = box->size;
-	current_level =NULL;
-	trovato = 0;
-	catasta_start_node = search(box,x,box->c_count[x]);
-	if (catasta_start_node){
-		catasta(box->root, box->nil);
-		return 0;
+list sottocatasta(rbtree* box, int x)
+
+{
+	catasta_node = search(box, x, box->c_count[x]);
+	
+	
+	if (catasta_node){
+		// preparazione variabili globali
+		catasta_list = NULL, current_level = NULL;;
+		size = box->size;
+		trovato = 0;
+		// printf("trovato");
+		scatasta(box->root, box->nil);
+		printf("\n");
+		
+		// ListPrint(catasta_list);
+		return catasta_list;
 	}
-	return -1;
+	
+	return catasta_list;
+}
+
+list anticatasta(rbtree* box, int x)
+
+{
+	catasta_node = search(box, x, box->c_count[x]);
+	
+	if (catasta_node){
+		// preparazione variabili globali
+		printf("ricerco e trovo %d, %d ", x, box->c_count[x]);
+		 
+		catasta_list = NULL, current_level = NULL;
+		size = box->size;
+		trovato = 0;
+		
+		// printf("trovato");
+		acatasta(box->root, box->nil);
+		printf("\n");
+		
+		// ListPrint(catasta_list);
+		return catasta_list;
+	}
+	
+	return NULL;
 }
 
 void statistica(int n, int m, int k){
@@ -581,3 +689,7 @@ void print_row(int *grid, int size){
 		}
 		
 }
+
+
+
+

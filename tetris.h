@@ -1,3 +1,7 @@
+#define TESTING
+
+#include <stdio.h>
+#include <stdlib.h>
 typedef enum {red, black} colore;
 
 struct rbnode {
@@ -32,3 +36,24 @@ int* estrai_in_parallelo (rbtree*);
 //prototipi tools
 int is_lower_than(int pa, int la, int pb, int lb);
 
+	typedef struct node {
+	  int p,l;
+	  struct node *next;
+	} node;
+	
+	typedef node *list;
+
+
+
+
+
+
+
+
+
+
+// #ifdef TESTING
+// list sottocatasta(rbtree* box, int x);
+// #else
+// int* sottocatasta(rbtree* box, int x);
+// #endif
