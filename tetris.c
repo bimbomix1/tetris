@@ -55,6 +55,7 @@ rbtree *scatola(int x){
 	temp->h = 0;
 	temp->size = x;
 	temp->c_count = malloc((x) * sizeof (int));
+	temp->c_max = malloc((x) * sizeof (int));
 	for(size_t i = 0; i <= temp->size; ++i)
 	{
 		temp->c_count[i] = 0;
@@ -64,6 +65,8 @@ rbtree *scatola(int x){
 
 int inserisci(rbtree* box, int x){
 	int base;
+	if (x < 0 )
+		return -1;
 	// il blocco eccede la dimensione consentita
 	if (x+1 >= box->size)
 		return -1;	
@@ -72,6 +75,7 @@ int inserisci(rbtree* box, int x){
 	// inserisci elemento
 	rbinsert(box,x,base+1);
 	// sistema contatore colonne
+	box->c_max[x] = base+1;
 	box->c_count[x] = base + 1;
 	box->c_count[x+1] = base + 1;
 	box->h = (base+1) > box->h ? base+1: box->h ; 
@@ -505,7 +509,7 @@ void acatasta(rbnode *n, rbnode *nil){
 																				next_row = temp;
 																				
 																			}
-		 					if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 8)){
+		 					if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 8) || ( next_row[n->p] >=1 && next_row[n->p] < 8)){
 		 							
 	
 									printf(" (%d,%d) ", n->p, n->l);
@@ -550,7 +554,7 @@ void scatasta(rbnode *n, rbnode *nil){
 		if (trovato == 1 ){
 			if (current_level != NULL){
 				if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 6)){
-					// printf(" (%d,%d) ", n->p, n->l);
+					printf(" (%d,%d) ", n->p, n->l);
 					ListInsert( &catasta_list, n->p ,n->l);
 					current_row[n->p] = 0;
 					next_row[n->p-1] = n->l-1;
@@ -572,6 +576,7 @@ list sottocatasta(rbtree* box, int x)
 	
 	
 	if (catasta_node){
+		printf("elemento trovato (%d, %d)", catasta_node->p, catasta_node->l);
 		// preparazione variabili globali
 		catasta_list = NULL, current_level = NULL;;
 		size = box->size;
@@ -590,12 +595,13 @@ list sottocatasta(rbtree* box, int x)
 list anticatasta(rbtree* box, int x)
 
 {
-	catasta_node = search(box, x, box->c_count[x]);
+	catasta_node = search(box, x, box->c_max[x]);
 	
+	// controllare che non ci siano valori strani nei contatori
+	// printf("il column count = %d, il max nella colonna è %d \n ", box->c_count[x], box->c_max[x]);
 	if (catasta_node){
 		// preparazione variabili globali
-		printf("ricerco e trovo %d, %d ", x, box->c_count[x]);
-		 
+		printf("elemento trovato (%d, %d)", catasta_node->p, catasta_node->l);
 		catasta_list = NULL, current_level = NULL;
 		size = box->size;
 		trovato = 0;

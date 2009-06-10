@@ -2,57 +2,95 @@
 #include "tetris.h"
 #include <stdlib.h>
 
-typedef struct node {
-  int p;
-int l;
-  struct node *next;
-} node;
-
-typedef node *list;
-
-list NEW() {
-  list l = NULL;
-  return l;
-}
-
-int IsEmpty( list s ) { return ( s == NULL ); }
-
-void ListInsert( list *s, int p, int l ) {
-  list t;
-  if ( IsEmpty( *s )  ) {
-    t = malloc( sizeof( struct node ) );
-    t->p = p;
-	t->l = l;
-    t->next = *s;
-    *s = t;
-    return ;
-  }
-  t = *s;
-  while ( ( t->next ) ) t = t->next;
-  
-    list q = malloc( sizeof( struct node ) );
-    q->p = p;
-	q->l = l;
-    q->next = t->next;
-    t->next = q;
-}
-
-void ListPrint(list *l){
-   for (list t = l; t != NULL; t = t->next )
-   printf( " (%d,%d)", t->p, t->l );
+int boxexist = 0;
+int box_exist(){
+	if (boxexist)
+		return 1;
+	else
+	{
+		printf("devi prima generare una scatola \n");
+		return 0;
+	}
 }
 
 int main( void ) {
-  list l = NEW();
-  int i;
-  int j,x;
-  srand( time( NULL ) );
-  for ( i = 0; i < 10; i++ ) {
-    j = rand() % 10;
-	x = rand() % 10;
-	printf("%d - ",j,x);
-    ListInsert( &l, j ,x);
-  }
-  printf( "\n" );
-  ListPrint(l);
+	int flag = 1;
+	rbtree *box;
+	int param[3];
+	char* cmd = (char*) malloc(sizeof(char));
+	printf("*************************************\n");
+	printf("Laboratiorio di Algoritmi\n");
+	printf("Progetto Giugno 2009 Tetris\n");
+	printf("*************************************\n");
+	printf("Digitare il carattere dell'operazione da svolgere secondo il seguente menu:\n");
+// fatta
+	printf("s (m) scatola di dimensione m \n");  	
+// fatta
+	printf("i (x) inserisce rettangolo in posizione x\n"); 
+// manca
+	printf("e (x) elimina il più alto rettangolo in posizione x\n");
+// fatta
+	printf("c (x)  calcola sottocatasta elemento in posizione x più alto\n");
+// fatta
+	printf("a (x)  calcola anticatasta elemento in posizione x più alto\n");
+// manca
+	printf("p estrae i pezzi liberi \n");
+// fatta
+	printf("t (n,m,k) esegue la statistica \n");
+	printf("!!! ATTENZIONE : dalla specifiche la statistica si invoca con il comando 't' e più 's' \n");
+// fatta
+	printf("v visualizza\n");
+// fatta
+	printf("f Esci\n");
+	while(flag){
+		printf(">");
+		scanf("%s", cmd);
+		switch (cmd[0]){
+			case 's':
+				scanf("%d", param);
+				box = scatola(param[0]);
+				if(box == NULL)
+					printf("errore \n");
+				else
+					boxexist = 1;
+				break;
+		    case 'i':
+				if(!box_exist()) break;
+					scanf("%d", param);
+					if(inserisci(box,param[0]) == -1)
+						printf("errore \n");
+				break;
+			case 'v':
+			if(!box_exist()) break;
+				visualizza(box);
+				printf("\n");
+			break;
+			
+			case 'c':
+				if(!box_exist()) break;
+				scanf("%d", param);
+				if(sottocatasta(box,param[0]) == NULL)
+					printf("vuoto \n");
+				break;
+			
+			case 'a':
+				if(!box_exist()) break;
+				scanf("%d", param);
+				if(anticatasta(box,param[0]) == NULL)
+				printf("vuoto \n");
+			break;
+				break;
+			
+			case 't':
+				scanf("%d", param);
+				scanf("%d", param +1);
+				scanf("%d", param +2);
+				statistica(param[0], param[1],param[2]);
+				break;
+			case 'f':
+				flag = 0;
+				break;
+				
+		}
+	}
 }

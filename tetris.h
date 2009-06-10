@@ -14,6 +14,7 @@ typedef struct rbnode rbnode;
 typedef struct {
 	int size;
 	int* c_count;
+	int* c_max;
 	int h;
 	rbnode *root, *nil;
 }rbtree;
