@@ -17,6 +17,7 @@ int main( void ) {
 	int flag = 1;
 	rbtree *box;
 	int param[3];
+	int *elements;
 	char* cmd = (char*) malloc(sizeof(char));
 	printf("*************************************\n");
 	printf("Laboratiorio di Algoritmi\n");
@@ -60,6 +61,12 @@ int main( void ) {
 					if(inserisci(box,param[0]) == -1)
 						printf("errore \n");
 				break;
+				case 'e':
+					if(!box_exist()) break;
+						scanf("%d", param);
+						if(elimina(box,param[0]) == -1)
+							printf("errore \n");
+					break;
 			case 'v':
 			if(!box_exist()) break;
 				visualizza(box);
@@ -79,6 +86,12 @@ int main( void ) {
 				if(anticatasta(box,param[0]) == NULL)
 				printf("vuoto \n");
 			break;
+				break;
+				
+			case 'p':
+				 	elements= get_free_elements(box);
+					estrai_in_parallelo(box, elements);
+					free(elements);
 				break;
 			
 			case 't':
