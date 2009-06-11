@@ -14,6 +14,7 @@ typedef struct rbnode rbnode;
 typedef struct {
 	int size;
 	int* c_count;
+	int* c_stack;
 	int* c_max;
 	int h;
 	rbnode *root, *nil;
@@ -42,19 +43,21 @@ int is_lower_than(int pa, int la, int pb, int lb);
 	  struct node *next;
 	} node;
 	
+	
+	
 	typedef node *list;
+	struct STACKnode {
+	  int data;
+	  struct STACKnode *next;
+	};
 
+	struct STACK { struct STACKnode *head; };
+	typedef struct STACK *stack;
 
+	stack STACKinit( void );
+	void STACKpush( 	stack, int );
+	int STACKpop( stack );
+	int STACKisEmpty( stack );
 
-
-
-
-
-
-
-
-// #ifdef TESTING
-// list sottocatasta(rbtree* box, int x);
-// #else
-// int* sottocatasta(rbtree* box, int x);
-// #endif
+	void STACKprint( stack );
+	

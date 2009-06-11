@@ -8,11 +8,13 @@
 int *grid, *current_row, *next_row;
 int size, current_level, currentLine = NULL;
 int trovato = 0, last_row_is_empty_row = 1;
-list catasta_list;
+list* catasta_list;
 rbnode* catasta_node;
 
 
-
+/*
+LISTA PER TESTING  coda
+*/
 int IsEmpty( list s ) { return ( s == NULL ); }
 
 void ListInsert( list *s, int p, int l ) {
@@ -33,10 +35,56 @@ void ListInsert( list *s, int p, int l ) {
 	    q->next = t->next;
 	    t->next = q;
 	}
-	void ListPrint(list *l){
-	   for (list t = l; t != NULL; t = t->next )
-	   printf( " (%d,%d)", t->p, t->l );
-	}
+void ListPrint(list *l){
+   for (list t = l; t != NULL; t = t->next )
+   printf( " (%d,%d)", t->p, t->l );
+}
+
+/*
+LISTA  STACK
+*/
+stack STACKinit( void ) {
+  stack s = malloc( sizeof( *s ) );
+  s->head = NULL;
+  return s;
+}
+
+void STACKpush( stack s , int i ) {
+  struct STACKnode *element = malloc( sizeof( struct STACKnode ) );
+  element->data = i; 
+  element->next = s->head;
+  s->head = element;
+}
+
+int STACKpop( stack s ) {
+  if ( STACKisEmpty( s ) ) {
+    fprintf( stderr, "\n\nPop su stack vuoto!\n\n" );
+  		return -1;
+	  }
+  int r = s->head->data;
+  struct STACKnode *sn = s->head->next;
+  free( s->head ); s->head = sn;
+  return r;
+}
+
+int STACKisEmpty( stack s ) {
+  return ( s->head == NULL );
+}
+
+void STACKprint( stack s ) {
+  struct STACKnode *i;
+  printf( "\n[" );
+  for ( i = s->head; i != NULL; i = i->next ) printf( "%d ", i->data );
+  printf( "]\n" );
+}
+int STACKtop( stack s ) {
+	if ( STACKisEmpty( s ) ){
+		return -1;
+	  }
+  struct STACKnode *i;
+	i = s->head;
+  return i->data;
+}
 
 // FUNZIONI TETRIS
 
@@ -48,9 +96,11 @@ rbtree *scatola(int x){
 	temp->size = x;
 	temp->c_count = malloc((x) * sizeof (int));
 	temp->c_max = malloc((x) * sizeof (int));
-	for(size_t i = 0; i <= temp->size; ++i)
+	temp->c_stack = malloc((x) * sizeof (stack));
+	for(size_t i = 0; i < temp->size; ++i)
 	{
 		temp->c_count[i] = 0;
+		temp->c_stack[i] = STACKinit();
 	}
 	return temp;
 }
@@ -64,10 +114,15 @@ int inserisci(rbtree* box, int x){
 		return -1;	
 		
 	base = MAX(box->c_count[x],box->c_count[x+1]);
-	// inserisci elemento
 	rbinsert(box,x,base+1);
+	
+	STACKpush(box->c_stack[x],base + 1);
+	STACKpush(box->c_stack[x+1],base + 1);
+    
+	// printf("\n \n ");
+	
 	// sistema contatore colonne
-	box->c_max[x] = base+1;
+	box->c_max[x] = base + 1;
 	box->c_count[x] = base + 1;
 	box->c_count[x+1] = base + 1;
 	box->h = (base+1) > box->h ? base+1: box->h ; 
@@ -81,34 +136,41 @@ int elimina(rbtree* box, int x){
 		return -1;
 	if (x+1 >= box->size)
 		return -1;
-	printf("le colonne sono %d e %d e io tento di eliminare (%d,%d) \n", box->c_count[x], box->c_count[x+1], x, x+1);
-	
-	if (box->c_count[x] != box->c_count[x+1])
+	if (box->c_count[x] != box->c_count[x+1] || ((box->c_count[x] == 0) ||(box->c_count[x+1] == 0) ))
 		return -1;
-	// controlla se può esistere
-	
-	
-	node = search(box,x,box->c_count[x]);
-	if(node){
-		rbdelete(box,node);
-		box->c_count[x]--;
-		box->c_count[x+1]--;
-	}else
-		return -1;
-    return 0;
+		
+	int el  = STACKpop(box->c_stack[x]);
+	node = search(box, x, box->c_count[x]);
+	el  = STACKpop(box->c_stack[x+1]);
+	if(node != NULL){
+			rbdelete(box,node);
+			int i = STACKtop(box->c_stack[x]);
+			box->c_count[x] = i > -1 ? i  : 0;
+			box->c_max[x] = i > -1 ? i : 0;
+			i = STACKtop(box->c_stack[x+1]);
+			box->c_count[x+1] = i > -1 ? i  : 0;			
+		}else 
+			return -1;
+			
+		return 0;
 }
 
 
 void estrai_in_parallelo(rbtree *box, int* free_elements){
-	for(int i = 0; i < box->size; i = i+2)
-	{
-		// printf("entrato con i = %d \n", i);
-		if (free_elements[i+1] != 0){
-			printf("elimino elemento (%d,%d)\n ",free_elements[i],free_elements[i+1]);
-			rbdelete(box,search(box,free_elements[i],free_elements[i+1]));
+	int i = 0;
+		while (i < box->size){
+		// printf("box->size = %d \n ");
+		if (i >= box->size)
+			return 0;
+		if (i+1 >= box->size)
+			return 0;
+
+		if (free_elements[i+1] != 0 ){
+			elimina(box,free_elements[i]);
 		}
-		else
-		   return 0;
+						else
+				return 0;
+			i = i + 2;
 	}
 }
 
@@ -259,10 +321,8 @@ rbnode *search(rbtree *r, int p, int l)
 
 	while(n != r->nil && is_lower_than(p,l, n->p,n->l) !=0)
 	        if(is_lower_than(p,l, n->p,n->l) < 0){
-					// printf("vado a sinistra \n");
 	                  n = n->left;
                      } else{
-	// printf("vado a destra \n");
                       n = n->right;}
 	return n == r->nil ? NULL : n;
 }
@@ -431,12 +491,11 @@ void inorderadv(rbnode *p, rbnode *nil)
 
 void visualizza(rbtree *p)
 {
-
+	free(grid);
 	grid = malloc(p->size * sizeof(int));
 	size = p->size;
 	inorderadv(p->root, p->nil);
 	print_row(grid, p->size);
-	
 }
 
 void init_random_number() { 
@@ -460,7 +519,6 @@ void acatasta(rbnode *n, rbnode *nil){
 								int* temp = current_row;
 								current_row = next_row;
 								next_row = temp;
-								
 						}									
 		 		}
 		 
@@ -481,9 +539,7 @@ void acatasta(rbnode *n, rbnode *nil){
 									next_row = temp;
 									
 								}
-		 					if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 8) || ( next_row[n->p] >=1 && next_row[n->p] < 8)){
-		 							
-	
+		 					if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < size) || ( next_row[n->p] >=1 && next_row[n->p] < size)){
 									printf(" (%d,%d) ", n->p, n->l-1);
 									last_row_is_empty_row = 0;
 									ListInsert( &catasta_list, n->p ,n->l);
@@ -524,7 +580,7 @@ void scatasta(rbnode *n, rbnode *nil){
 	    }else{
 		if (trovato == 1 ){
 			if (current_level != NULL){
-				if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < 6)){
+				if (current_row[n->p] == current_level || ( current_row[n->p] >=1 && current_row[n->p] < size)){
 					printf(" (%d,%d) ", n->p, n->l-1);
 					ListInsert( &catasta_list, n->p ,n->l);
 					current_row[n->p] = 0;
@@ -545,6 +601,7 @@ list sottocatasta(rbtree* box, int x)
 {
 	catasta_node = search(box, x, box->c_max[x]);
 	if (catasta_node){
+		free(catasta_list);
 		catasta_list = NULL, current_level = NULL;;
 		size = box->size;
 		trovato = 0;
@@ -560,6 +617,8 @@ list anticatasta(rbtree* box, int x)
 {
 	catasta_node = search(box, x, box->c_max[x]);
 	if (catasta_node){
+		free(catasta_list);
+		
 		catasta_list = NULL, current_level = NULL;
 		size = box->size;
 		trovato = 0;
@@ -584,7 +643,7 @@ void statistica(int n, int m, int k){
 		free(box);
 		i++;
 	}
-		printf("valore medio = %f\n", media/k);
+	printf("valore medio = %f\n", media/k);
 }
 
 
@@ -593,6 +652,8 @@ int* get_free_elements(rbtree* box){
 	int* free_elements = malloc((box->size) * sizeof (int));
 	int j = 0, i = 0, count;
 	while (i < box->size){
+		
+		
 		    count = 0;
 			// metto a 0 il contenuto nella posizione i e i+1 dell'array elementi liberi  O(2)
 			free_elements[i] = 0;
@@ -638,9 +699,7 @@ void print_row(int *grid, int size){
 			grid[n] = 0;
 					printf(" ");
 		}n++;
-		
-		}
-		
+		}	
 }
 
 

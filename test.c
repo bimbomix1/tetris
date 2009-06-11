@@ -90,14 +90,11 @@ void should_remove_many_items(){
 	assert_not_equal(NULL, search(box,8,1));
 	assert_not_equal(NULL, node = search(box,8,1));
 	rbdelete(box,node);
-	printf("che c'è dentro ? \n");
-	display(box);
-	
-	assert_equal(NULL, search(box,8,1));
+		assert_equal(NULL, search(box,8,1));
 	assert_not_equal(NULL, search(box,5,5));
 	
-    // rbdelete(box,search(box,5,5));
-	// assert_equal(NULL, search(box,5,5));
+    rbdelete(box,search(box,5,5));
+	assert_equal(NULL, search(box,5,5));
 	
 	// display(box);
 
@@ -139,16 +136,7 @@ void should_remove_many_items_2(){
 	assert_not_equal(NULL, node = search(box,4,5));
 	rbdelete(box,node);
 	assert_equal(NULL, node = search(box,4,5));	
-	display(box);
-	// assert_not_equal(NULL, node = search(box,4,2));
-	// assert_not_equal(NULL, node = search(box,3,2));
 
-	// 	assert_equal(NULL, node =  search(box,3,2));
-	
-	// rbnode* node = search(box,3,2);
-	// 	assert_not_equal(NULL,node);
-	// 	rbdelete(box,node);
-	// 	assert_equal(NULL,node = search(box,3,2));
 }
 void should_search_many_items(){
 	rbtree *box = createrbtree();
@@ -907,6 +895,21 @@ void should_get_sottocatasta_7(){
 	// visualizza(box);
 }
 
+void should_get_sottocatasta_8(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,0));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,1));
+	list l = sottocatasta(box,4);
+	assert_not_equal(NULL, l);
+	assert_equal(2, l->p);
+	assert_equal(3, l->l);
+	l = l->next;
+	printf("\n");
+	visualizza(box);
+}
 void should_get_sottocatasta_esempio_requisiti(){
 	rbtree *box = scatola(11);
 	list l;
@@ -1047,6 +1050,8 @@ void should_get_anticatasta_2(){
 	// visualizza(box);
 
 }
+
+
 void should_get_anticatasta(){
 	rbtree *box = scatola(11);
 		list l;
@@ -1295,7 +1300,7 @@ void should_estrai_in_parallelo_2(){
 	assert_equal(NULL, search(box,2,1));
 	display(box);
 	
-	visualizza(box);
+	// visualizza(box);
 }
 void elimina_1(){
 	rbtree *box = scatola(11);
@@ -1311,14 +1316,183 @@ void elimina_1(){
 	assert_equal(-1, elimina(box, 2));
 	assert_equal(-1, elimina(box, 3));
 	assert_equal(-1, elimina(box, 4));
-	assert_equal(0, elimina(box, 5));
-	assert_equal(0, elimina(box, 4));
-	// 	assert_equal(0, elimina(box, 3));
-	visualizza(box);
+		assert_equal(0, elimina(box, 5));
+			assert_equal(NULL, search(box,5,4));
+		assert_equal(-1, elimina(box, 5));
+
+		assert_equal(0, elimina(box, 4));
+
+
 	
 }
 void elimina_2(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,9));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,6));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,8));
+	assert_equal(-1, elimina(box, 0));
+	assert_equal(-1, elimina(box, 1));
+	assert_equal(0, elimina(box, 2));
+	assert_equal(NULL, search(box,2,10));
+	assert_equal(0, elimina(box, 3));
+	assert_equal(NULL, search(box,3,8));
+	assert_equal(-1, elimina(box, 4));
+	assert_equal(-1, elimina(box, 5));
+	assert_equal(-1, elimina(box, 6));
+	assert_equal(-1, elimina(box, 7));
+	assert_equal(0, elimina(box, 8));
+	assert_equal(9, box->c_count[8]);
+}
+
+void elimina_3(){
+	rbtree *box = scatola(11);
+	assert_equal(-1, elimina(box,2));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(-1, elimina(box,0));
+	assert_equal(-1, elimina(box,1));
+	assert_equal(-1, elimina(box,2));
+	assert_equal(-1, elimina(box,3));
+	assert_equal(-1, elimina(box,4));
+	assert_equal(1, box->c_count[5]);
+	assert_equal(1, box->c_count[6]);
+	assert_equal(0, elimina(box,5));
+	assert_equal(0, box->c_count[5]);
+	assert_equal(0, box->c_count[6]);
+	assert_equal(0, inserisci(box,9));
+	assert_equal(0, inserisci(box,6));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,9));
+	assert_equal(1, box->c_count[3]);
+	assert_equal(1, box->c_count[4]);
 	
+	assert_equal(0, elimina(box,3));
+	assert_equal(0, box->c_count[3]);
+	assert_equal(0, box->c_count[4]);
+	assert_equal(-1, elimina(box,4));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,1));
+
+	assert_equal(0, inserisci(box,2));
+	// for(size_t i = 0; i < 11; ++i){printf("[%d] => %d elementi in lista ", i, box->c_count[i]);
+	// STACKprint(box->c_stack[i]); printf("\n");}
+	assert_equal(0, inserisci(box,5));
+	assert_equal(-1, elimina(box,6));
+	assert_equal(-1, elimina(box,1));
+	assert_equal(2, box->c_count[2]);
+	assert_equal(2, box->c_count[3]);
+
+
+	assert_equal(0, elimina(box,2));
+
+	
+	// visualizza(box);
+	assert_equal(1, box->c_count[2]);
+	assert_equal(0, box->c_count[3]);
+
+
+}
+
+void elimina_4(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,0));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,1));
+	// for(size_t i = 0; i < 11; ++i){printf("[%d] => %d \n", i, box->c_count[i]);}
+	assert_equal(1, box->c_count[0]);
+	assert_equal(3, box->c_count[1]);
+	assert_equal(3, box->c_count[2]);
+	assert_equal(2, box->c_count[3]);
+	assert_equal(1, box->c_count[4]);
+	assert_equal(0, box->c_count[5]);	
+	// visualizza(box);
+	// 	for(size_t i = 0; i < 11; ++i){printf("[%d] => %d elementi in lista ", i, box->c_count[i]);STACKprint(box->c_stack[i]); printf("\n");}
+	// 	
+	assert_equal(0, elimina(box,1));
+	// for(size_t i = 0; i < 11; ++i){printf("[%d] => %d elementi in lista ", i, box->c_count[i]);STACKprint(box->c_stack[i]); printf("\n");}
+	// 
+	assert_equal(1, box->c_count[0]);
+	assert_equal(1, box->c_count[1]);
+	assert_equal(2, box->c_count[2]);
+	assert_equal(2, box->c_count[3]);
+	assert_equal(1, box->c_count[4]);
+		assert_equal(0, box->c_count[5]);
+	// printf("finale \n \n");
+	// visualizza(box);
+
+	
+
+}
+void elimina_5(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,9));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,1));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,5));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,2));
+	assert_equal(0, inserisci(box,6));
+	assert_equal(0, inserisci(box,7));
+	assert_equal(0, inserisci(box,8));
+	// for(size_t i = 0; i < 11; ++i){printf("[%d] => %d elementi in lista ", i, box->c_count[i]);
+	// 	STACKprint(box->c_stack[i]); printf("\n");}
+	 // visualizza(box);
+}
+void elimina_6(){
+	rbtree *box = scatola(11);
+	assert_equal(0, inserisci(box,3));
+	assert_equal(0, inserisci(box,4));
+	assert_equal(0, inserisci(box,3));
+	// printf("prima di eliminare \n");
+	// visualizza(box);
+	// for(size_t i = 0; i < 11; ++i){printf("[%d] => %d elementi in lista ", i, box->c_count[i]);STACKprint(box->c_stack[i]); printf("\n");}
+	
+
+		assert_equal(0, elimina(box,3));
+		// for(size_t i = 0; i < 11; ++i){printf("[%d] => %d elementi in lista ", i, box->c_count[i]);STACKprint(box->c_stack[i]); printf("\n");}																		
+		
+		assert_equal(0, inserisci(box,1));
+				assert_equal(0, inserisci(box,3));
+				assert_equal(0, inserisci(box,5));
+				assert_equal(0, inserisci(box,8));
+				assert_equal(0, inserisci(box,9));
+				assert_equal(0, inserisci(box,3));
+				
+				assert_equal(0, box->c_count[0]);
+				assert_equal(1, box->c_count[1]);
+				assert_equal(1, box->c_count[2]);
+				assert_equal(4, box->c_count[3]);
+				assert_equal(4, box->c_count[4]);
+				assert_equal(3, box->c_count[5]);
+				assert_equal(3, box->c_count[6]);
+				assert_equal(0, box->c_count[7]);
+				assert_equal(1, box->c_count[8]);
+				assert_equal(2, box->c_count[9]);
+		
+								// assert_equal(0, elimina(box,3));
+	// visualizza(box);
 }
 int main(int argc, char **argv) {
 	TestSuite *suite = create_test_suite();
@@ -1387,47 +1561,44 @@ int main(int argc, char **argv) {
 	add_test(catasta_tests,should_get_sottocatasta_5);
 	add_test(catasta_tests,should_get_sottocatasta_6);
 	add_test(catasta_tests,should_get_sottocatasta_7);
+		add_test(catasta_tests,should_get_sottocatasta_8);
 
 	// ESTRAI IN PARALLELO 
 	TestSuite *estrai_tests = create_test_suite();
 	add_test(estrai_tests,should_estrai_in_parallelo_1);
-		add_test(estrai_tests,should_estrai_in_parallelo_2);
+	add_test(estrai_tests,should_estrai_in_parallelo_2);
 	
 	 // ELIMINA
 	TestSuite *elimina_tests = create_test_suite();
 	add_test(elimina_tests,elimina_1);
 	add_test(elimina_tests,elimina_2);
+	add_test(elimina_tests,elimina_3);
+	add_test(elimina_tests,elimina_5);
+	add_test(elimina_tests,elimina_6);
+	add_test(elimina_tests,elimina_4);
 	
-	// // STAST SUITES
+	
+	// STAST SUITES
 	printf("TEST : SCATOLA ===================== \n");
-	run_test_suite(scatola_tests, create_text_reporter());
-	printf(" \nTEST : STATISTICA ===================== \n");
-	run_test_suite(statistica_tests, create_text_reporter());
-	printf(" \nTEST : ANTICATASTA ===================== \n");
-	run_test_suite(anticatasta_tests, create_text_reporter());
-	printf(" \nTEST : CATASTA ===================== \n");
-	run_test_suite(catasta_tests, create_text_reporter());
-	printf(" \nTEST : STRUTTURA ===================== \n");
-	run_test_suite(structure_tests, create_text_reporter());
-	printf(" \nTEST : INSERIMENTO ===================== \n");
-	run_test_suite(inserisci_tests, create_text_reporter());
-
-	printf(" \nTEST : UTILITA' ===================== \n");
-	run_test_suite(tools_tests, create_text_reporter());
-	printf(" \nTEST : ESTRAI IN PARALLELO' ===================== \n");
-	run_test_suite(estrai_tests, create_text_reporter());	
+			run_test_suite(scatola_tests, create_text_reporter());
+			printf(" \nTEST : STATISTICA ===================== \n");
+			run_test_suite(statistica_tests, create_text_reporter());
+			printf(" \nTEST : ANTICATASTA ===================== \n");
+			run_test_suite(anticatasta_tests, create_text_reporter());
+			printf(" \nTEST : CATASTA ===================== \n");
+			run_test_suite(catasta_tests, create_text_reporter());
+			printf(" \nTEST : STRUTTURA ===================== \n");
+			run_test_suite(structure_tests, create_text_reporter());
+			printf(" \nTEST : INSERIMENTO ===================== \n");
+			run_test_suite(inserisci_tests, create_text_reporter());
+			
+			printf(" \nTEST : UTILITA' ===================== \n");
+			run_test_suite(tools_tests, create_text_reporter());
+			printf(" \nTEST : ESTRAI IN PARALLELO' ===================== \n");
+			run_test_suite(estrai_tests, create_text_reporter());	
 	printf(" \nTEST : Cancellazione ===================== \n");
 	run_test_suite(elimina_tests, create_text_reporter());
-	
-	
-		// 
-		// run_test_suite(suite, create_text_reporter());
-		// add_test(suite1, should_find_if_is_block_1);
-		// add_test(suite1, should_find_if_is_block_2);
-		// add_test(suite1, should_find_if_is_block_3);
-		// add_test(suite1, should_find_if_is_block_4);
-		// add_test(suite1, should_find_if_is_block_5);
-		// run_test_suite(suite1, create_text_reporter());
+
 		return 0;
 	
 }

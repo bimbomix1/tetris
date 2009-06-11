@@ -14,6 +14,8 @@ int box_exist(){
 }
 
 int main( void ) {
+
+	
 	int flag = 1;
 	rbtree *box;
 	int param[3];
@@ -78,13 +80,15 @@ int main( void ) {
 				scanf("%d", param);
 				if(sottocatasta(box,param[0]) == NULL)
 					printf("vuoto \n");
+				printf("\n");
 				break;
 			
 			case 'a':
 				if(!box_exist()) break;
 				scanf("%d", param);
 				if(anticatasta(box,param[0]) == NULL)
-				printf("vuoto \n");
+				printf("vuoto ");
+				printf("\n");
 			break;
 				break;
 				
@@ -95,6 +99,7 @@ int main( void ) {
 				break;
 			
 			case 't':
+				if(!box_exist()) break;
 				scanf("%d", param);
 				scanf("%d", param +1);
 				scanf("%d", param +2);
